@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Website</title>
+    <style>
+        body {
+            background-image: url('https://i.ytimg.com/vi/FRi3A4FkfN8/hq720.jpg?sqp=-oaymwEXCNUGEOADIAQqCwjVARCqCBh4INgESFo&rs=AMzJL3m3DSHAXq36WAyWp_QEdM5-GHO9cg');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            animation: flash 1s infinite alternate, wiggle 1s ease-in-out infinite;
+            text-align: center;
+            margin: 0;
+            overflow: hidden;
+        }
+        @keyframes flash {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .full-screen-gif {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            background: url('https://i.gifer.com/OSNw.gif') no-repeat center center;
+            background-size: cover;
+            opacity: 0; /* Initially hidden */
+            animation: shake 0.2s infinite alternate, fadeInOut 10s infinite;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-10px, 10px); }
+            50% { transform: translate(10px, -10px); }
+            75% { transform: translate(-10px, 10px); }
+        }
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        .blood {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/asfalt-dark.png'), rgba(255, 0, 0, 0.7);
+            background-size: cover;
+            animation: bloodRun 3s infinite linear;
+            pointer-events: none;
+        }
+        @keyframes bloodRun {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
+        .scary-gif {
+            position: fixed;
+            left: 1px;
+            top: 0;
+            z-index: 400;
+            max-height: 300px;
+        }
+        .countdown {
+            position: fixed;
+            top: calc(50% + 3in);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 100px;
+            color: red;
+            z-index: 10000;
+        }
+        .image-on-play {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 10001;
+            background: url('https://steamuserimages-a.akamaihd.net/ugc/1744601561621222241/D213EE560C9CF4AA63BD913970B8FEF6626C14FD/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false') no-repeat center center;
+            background-size: contain;
+        }
+    </style>
+</head>
+<body>
+    <!-- Countdown Timer -->
+    <div id="countdown" class="countdown">5</div>
+
+    <!-- YouTube Embed Codes (Hidden) -->
+    <iframe id="music1" width="0" height="0" src="https://www.youtube.com/embed/QT-K4Z_1ajY?autoplay=1&controls=0" 
+        title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen loading="lazy"></iframe>
+
+    <iframe id="music2" width="0" height="0" src="https://www.youtube.com/embed/NK_PFZsCZv4?enablejsapi=1&autoplay=1&controls=0" 
+        title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen loading="lazy"></iframe>
+
+    <!-- Image Display During Second Video -->
+    <div id="image-on-play" class="image-on-play"></div>
+
+    <!-- Blood Effect -->
+    <div class="blood"></div>
+
+    <!-- Scary GIF -->
+    <div class="scary-gif">
+        <img src="https://cdn.shopify.com/s/files/1/0840/1669/3546/files/The-Scariest-GIFs-on-the-Internet4.gif" height="220"/>
+    </div>
+
+    <!-- Full-Screen GIF that shakes every 5 seconds -->
+    <div id="full-screen-gif" class="full-screen-gif"></div>
+
+    <script>
+        let preventNewTabs = false;
+        let countdownInterval;
+        let countdown = 5;
+        const countdownElement = document.getElementById('countdown');
+        const imageOnPlay = document.getElementById('image-on-play');
+
+        // Function to open a new tab with the same URL and move it around
+        function openNewTab() {
+            if (!preventNewTabs) {
+                const width = 400;
+                const height = 300;
+                const left = Math.random() * (window.screen.width - width);
+                const top = Math.random() * (window.screen.height - height);
+                const newWindow = window.open('', '_blank', `width=${width},height=${height},left=${left},top=${top}`);
+                if (newWindow) {
+                    const newDocument = newWindow.document;
+                    newDocument.write(`
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <title>Your Website</title>
+                            <style>
+                                body {
+                                    background-image: url('https://i.ytimg.com/vi/FRi3A4FkfN8/hq720.jpg?sqp=-oaymwEXCNUGEOADIAQqCwjVARCqCBh4INgESFo&rs=AMzJL3m3DSHAXq36WAyWp_QEdM5-GHO9cg');
+                                    background-size: cover;
+                                    background-position: center center;
+                                    background-repeat: no-repeat;
+                                    background-attachment: fixed;
+                                    animation: flash 1s infinite alternate, wiggle 1s ease-in-out infinite;
+                                    text-align: center;
+                                    margin: 0;
+                                    overflow: hidden;
+                                }
+                                @keyframes flash {
+                                    0% { opacity: 1; }
+                                    50% { opacity: 0.3; }
+                                    100% { opacity: 1; }
+                                }
+                                @keyframes wiggle {
+                                    0% { transform: rotate(0deg); }
+                                    25% { transform: rotate(5deg); }
+                                    50% { transform: rotate(0deg); }
+                                    75% { transform: rotate(-5deg); }
+                                    100% { transform: rotate(0deg); }
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <iframe width="0" height="0" src="https://www.youtube.com/embed/QT-K4Z_1ajY?autoplay=1&controls=0" 
+                                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen loading="lazy"></iframe>
+                            <script>
+                                // Function to move the window around the screen
+                                function moveWindow() {
+                                    setInterval(() => {
+                                        const x = Math.random() * (window.screen.width - window.outerWidth);
+                                        const y = Math.random() * (window.screen.height - window.outerHeight);
+                                        window.moveTo(x, y);
+                                    }, 1000); // Move every 1 second
+                                }
+                                window.onload = moveWindow;
+                            <\/script>
+                        </body>
+                        </html>
+                    `);
+                    newDocument.close();
+                    newWindow.focus();
+                }
+            }
+        }
+
+        // Countdown timer
+        function startCountdown() {
+            countdownInterval = setInterval(() => {
+                countdown -= 1;
+                countdownElement.textContent = countdown;
+                if (countdown === 0) {
+                    clearInterval(countdownInterval);
+                    countdownElement.style.display = 'none';
+
+                    // Open the first tab after countdown, then open tabs every 0.5 seconds
+                    openNewTab();
+                    setInterval(() => {
+                        openNewTab();
+                    }, 500);
+                }
+            }, 1000);
+        }
+
+        // Restart the countdown
+        function restartCountdown() {
+            countdown = 5;
+            countdownElement.textContent = countdown;
+            countdownElement.style.display = 'block';
+            startCountdown();
+        }
+
+        // Start the countdown when the page loads
+        window.onload = startCountdown;
+
+        // Function to stop the countdown and show the message
+        function stopCountdown() {
+            clearInterval(countdownInterval);
+            countdownElement.textContent = "Good job, you figured out how to stop it!";
+        }
+
+        // Handle the second video and image display
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING) {
+                // Show the image when the second video starts playing
+                imageOnPlay.style.display = 'block';
+                setTimeout(() => {
+                    imageOnPlay.style.display = 'none';
+                }, 2000); // Hide the image after 2 seconds
+            }
+        }
+
+        function onYouTubeIframeAPIReady() {
+            new YT.Player('music2', {
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        // Load YouTube Iframe API
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // Prevent the window from being closed
+        window.onbeforeunload = function() {
+            return "Are you sure you want to leave?";
+        };
+
+        // Listen for keydown and keyup events to toggle the preventNewTabs flag
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Shift') {  // Change 'Shift' to any key you prefer
+                preventNewTabs = true;
+                stopCountdown();
+            }
+        });
+
+        document.addEventListener('keyup', (event) => {
+            if (event.key === 'Shift') {  // Change 'Shift' to any key you prefer
+                preventNewTabs = false;
+                restartCountdown();
+            }
+        });
+    </script>
+</body>
+</html>
